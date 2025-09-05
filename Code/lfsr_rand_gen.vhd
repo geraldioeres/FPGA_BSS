@@ -1,0 +1,40 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity lfsr_rand_gen is
+	port(
+		Clock_In: in std_logic;
+		Gen_Num: in std_logic;
+		Rand_Out: out std_logic_vector(2 downto 0)
+	);
+end lfsr_rand_gen;
+
+architecture arch of lfsr_rand_gen is
+	signal lfsr_reg: std_logic_vector(2 downto 0) := "111";
+	constant CLK_FREQ: integer := 50000000;
+	-- constant CLK_FREQ: integer := 10;
+	signal freq_count_lfsr: integer := 0;
+begin
+	lfsr_generation: process(Clock_In, Gen_Num)
+	begin
+		if (Gen_Num = '1') then
+			if rising_edge(Clock_In) then
+				if (freq_count_lfsr = CLK_FREQ / 2) then 
+					freq_count_lfsr <= 0;
+					lfsr_reg(0) <= lfsr_reg(2) xor lfsr_reg(1);
+					lfsr_reg(1) <= lfsr_reg(0);
+					lfsr_reg(2) <= lfsr_reg(1);
+					
+					case lfsr_reg is 
+						when "100" => Rand_Out <= "100";
+						when "101" => Rand_Out <= "110";
+						when others => Rand_Out <= "101";
+					end case;
+				else
+					freq_count_lfsr <= freq_count_lfsr + 1;
+				end if;
+			end if;
+		end if;
+	end process lfsr_generation;
+end arch;

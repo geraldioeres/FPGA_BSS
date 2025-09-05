@@ -1,0 +1,243 @@
+/*
+ Copyright (C) 2018  Intel Corporation. All rights reserved.
+ Your use of Intel Corporation's design tools, logic functions 
+ and other software and tools, and its AMPP partner logic 
+ functions, and any output files from any of the foregoing 
+ (including device programming or simulation files), and any 
+ associated documentation or information are expressly subject 
+ to the terms and conditions of the Intel Program License 
+ Subscription Agreement, the Intel Quartus Prime License Agreement,
+ the Intel FPGA IP License Agreement, or other applicable license
+ agreement, including, without limitation, that your use is for
+ the sole purpose of programming logic devices manufactured by
+ Intel and sold by Intel or its authorized distributors.  Please
+ refer to the applicable agreement for further details.
+*/
+MODEL
+/*MODEL HEADER*/
+/*
+ This file contains Fast Corner delays for the design using part 5CSXFC6D6F31C6
+ with speed grade M, core voltage 1.1V, and temperature 0 Celsius
+
+*/
+MODEL_VERSION "1.0";
+DESIGN "cccv_controller_v4";
+DATE "12/16/2023 17:07:30";
+PROGRAM "Quartus Prime";
+
+
+
+INPUT Clock;
+INPUT Page_Prev;
+INPUT Page_Next;
+INPUT Set_Button;
+INPUT Set_Tres[1];
+INPUT Start;
+INPUT Set_Tres[0];
+INPUT Inc_Dec;
+INPUT Reset;
+OUTPUT Start_LED;
+OUTPUT Tres_LED[0];
+OUTPUT Tres_LED[1];
+OUTPUT Page_LED[0];
+OUTPUT Page_LED[1];
+OUTPUT Page_LED[2];
+OUTPUT Page_LED[3];
+OUTPUT Page_LED[4];
+OUTPUT SSEG0[0];
+OUTPUT SSEG0[1];
+OUTPUT SSEG0[2];
+OUTPUT SSEG0[3];
+OUTPUT SSEG0[4];
+OUTPUT SSEG0[5];
+OUTPUT SSEG0[6];
+OUTPUT SSEG0[7];
+OUTPUT SSEG1[0];
+OUTPUT SSEG1[1];
+OUTPUT SSEG1[2];
+OUTPUT SSEG1[3];
+OUTPUT SSEG1[4];
+OUTPUT SSEG1[5];
+OUTPUT SSEG1[6];
+OUTPUT SSEG1[7];
+OUTPUT SSEG2[0];
+OUTPUT SSEG2[1];
+OUTPUT SSEG2[2];
+OUTPUT SSEG2[3];
+OUTPUT SSEG2[4];
+OUTPUT SSEG2[5];
+OUTPUT SSEG2[6];
+OUTPUT SSEG2[7];
+OUTPUT SSEG3[0];
+OUTPUT SSEG3[1];
+OUTPUT SSEG3[2];
+OUTPUT SSEG3[3];
+OUTPUT SSEG3[4];
+OUTPUT SSEG3[5];
+OUTPUT SSEG3[6];
+OUTPUT SSEG3[7];
+OUTPUT SSEG4[0];
+OUTPUT SSEG4[1];
+OUTPUT SSEG4[2];
+OUTPUT SSEG4[3];
+OUTPUT SSEG4[4];
+OUTPUT SSEG4[5];
+OUTPUT SSEG4[6];
+OUTPUT SSEG4[7];
+OUTPUT SSEG5[0];
+OUTPUT SSEG5[1];
+OUTPUT SSEG5[2];
+OUTPUT SSEG5[3];
+OUTPUT SSEG5[4];
+OUTPUT SSEG5[5];
+OUTPUT SSEG5[6];
+OUTPUT SSEG5[7];
+
+/*Arc definitions start here*/
+pos_Page_Next__Clock__setup:		SETUP (POSEDGE) Page_Next Clock ;
+pos_Page_Prev__Clock__setup:		SETUP (POSEDGE) Page_Prev Clock ;
+pos_Reset__Clock__setup:		SETUP (POSEDGE) Reset Clock ;
+pos_Start__Clock__setup:		SETUP (POSEDGE) Start Clock ;
+pos_Start__Reset__setup:		SETUP (POSEDGE) Start Reset ;
+pos_Inc_Dec__Set_Button__setup:		SETUP (POSEDGE) Inc_Dec Set_Button ;
+pos_Set_Tres[0]__Set_Button__setup:		SETUP (POSEDGE) Set_Tres[0] Set_Button ;
+pos_Set_Tres[1]__Set_Button__setup:		SETUP (POSEDGE) Set_Tres[1] Set_Button ;
+pos_Start__Set_Button__setup:		SETUP (POSEDGE) Start Set_Button ;
+pos_Page_Next__Clock__hold:		HOLD (POSEDGE) Page_Next Clock ;
+pos_Page_Prev__Clock__hold:		HOLD (POSEDGE) Page_Prev Clock ;
+pos_Reset__Clock__hold:		HOLD (POSEDGE) Reset Clock ;
+pos_Start__Clock__hold:		HOLD (POSEDGE) Start Clock ;
+pos_Start__Reset__hold:		HOLD (POSEDGE) Start Reset ;
+pos_Inc_Dec__Set_Button__hold:		HOLD (POSEDGE) Inc_Dec Set_Button ;
+pos_Set_Tres[0]__Set_Button__hold:		HOLD (POSEDGE) Set_Tres[0] Set_Button ;
+pos_Set_Tres[1]__Set_Button__hold:		HOLD (POSEDGE) Set_Tres[1] Set_Button ;
+pos_Start__Set_Button__hold:		HOLD (POSEDGE) Start Set_Button ;
+pos_Clock__SSEG0[0]__delay:		DELAY (POSEDGE) Clock SSEG0[0] ;
+pos_Clock__SSEG0[1]__delay:		DELAY (POSEDGE) Clock SSEG0[1] ;
+pos_Clock__SSEG0[2]__delay:		DELAY (POSEDGE) Clock SSEG0[2] ;
+pos_Clock__SSEG0[3]__delay:		DELAY (POSEDGE) Clock SSEG0[3] ;
+pos_Clock__SSEG0[4]__delay:		DELAY (POSEDGE) Clock SSEG0[4] ;
+pos_Clock__SSEG0[5]__delay:		DELAY (POSEDGE) Clock SSEG0[5] ;
+pos_Clock__SSEG0[6]__delay:		DELAY (POSEDGE) Clock SSEG0[6] ;
+pos_Clock__SSEG1[0]__delay:		DELAY (POSEDGE) Clock SSEG1[0] ;
+pos_Clock__SSEG1[1]__delay:		DELAY (POSEDGE) Clock SSEG1[1] ;
+pos_Clock__SSEG1[2]__delay:		DELAY (POSEDGE) Clock SSEG1[2] ;
+pos_Clock__SSEG1[3]__delay:		DELAY (POSEDGE) Clock SSEG1[3] ;
+pos_Clock__SSEG1[4]__delay:		DELAY (POSEDGE) Clock SSEG1[4] ;
+pos_Clock__SSEG1[5]__delay:		DELAY (POSEDGE) Clock SSEG1[5] ;
+pos_Clock__SSEG1[6]__delay:		DELAY (POSEDGE) Clock SSEG1[6] ;
+pos_Clock__SSEG2[0]__delay:		DELAY (POSEDGE) Clock SSEG2[0] ;
+pos_Clock__SSEG2[1]__delay:		DELAY (POSEDGE) Clock SSEG2[1] ;
+pos_Clock__SSEG2[2]__delay:		DELAY (POSEDGE) Clock SSEG2[2] ;
+pos_Clock__SSEG2[3]__delay:		DELAY (POSEDGE) Clock SSEG2[3] ;
+pos_Clock__SSEG2[4]__delay:		DELAY (POSEDGE) Clock SSEG2[4] ;
+pos_Clock__SSEG2[5]__delay:		DELAY (POSEDGE) Clock SSEG2[5] ;
+pos_Clock__SSEG2[6]__delay:		DELAY (POSEDGE) Clock SSEG2[6] ;
+pos_Clock__SSEG3[0]__delay:		DELAY (POSEDGE) Clock SSEG3[0] ;
+pos_Clock__SSEG3[1]__delay:		DELAY (POSEDGE) Clock SSEG3[1] ;
+pos_Clock__SSEG3[2]__delay:		DELAY (POSEDGE) Clock SSEG3[2] ;
+pos_Clock__SSEG3[3]__delay:		DELAY (POSEDGE) Clock SSEG3[3] ;
+pos_Clock__SSEG3[4]__delay:		DELAY (POSEDGE) Clock SSEG3[4] ;
+pos_Clock__SSEG3[5]__delay:		DELAY (POSEDGE) Clock SSEG3[5] ;
+pos_Clock__SSEG3[6]__delay:		DELAY (POSEDGE) Clock SSEG3[6] ;
+pos_Clock__SSEG5[0]__delay:		DELAY (POSEDGE) Clock SSEG5[0] ;
+pos_Clock__SSEG5[3]__delay:		DELAY (POSEDGE) Clock SSEG5[3] ;
+pos_Clock__SSEG5[6]__delay:		DELAY (POSEDGE) Clock SSEG5[6] ;
+pos_Reset__Start_LED__delay:		DELAY (POSEDGE) Reset Start_LED ;
+pos_Set_Button__SSEG0[0]__delay:		DELAY (POSEDGE) Set_Button SSEG0[0] ;
+pos_Set_Button__SSEG0[1]__delay:		DELAY (POSEDGE) Set_Button SSEG0[1] ;
+pos_Set_Button__SSEG0[2]__delay:		DELAY (POSEDGE) Set_Button SSEG0[2] ;
+pos_Set_Button__SSEG0[3]__delay:		DELAY (POSEDGE) Set_Button SSEG0[3] ;
+pos_Set_Button__SSEG0[4]__delay:		DELAY (POSEDGE) Set_Button SSEG0[4] ;
+pos_Set_Button__SSEG0[5]__delay:		DELAY (POSEDGE) Set_Button SSEG0[5] ;
+pos_Set_Button__SSEG0[6]__delay:		DELAY (POSEDGE) Set_Button SSEG0[6] ;
+pos_Set_Button__SSEG1[0]__delay:		DELAY (POSEDGE) Set_Button SSEG1[0] ;
+pos_Set_Button__SSEG1[1]__delay:		DELAY (POSEDGE) Set_Button SSEG1[1] ;
+pos_Set_Button__SSEG1[2]__delay:		DELAY (POSEDGE) Set_Button SSEG1[2] ;
+pos_Set_Button__SSEG1[3]__delay:		DELAY (POSEDGE) Set_Button SSEG1[3] ;
+pos_Set_Button__SSEG1[4]__delay:		DELAY (POSEDGE) Set_Button SSEG1[4] ;
+pos_Set_Button__SSEG1[5]__delay:		DELAY (POSEDGE) Set_Button SSEG1[5] ;
+pos_Set_Button__SSEG1[6]__delay:		DELAY (POSEDGE) Set_Button SSEG1[6] ;
+pos_Set_Button__SSEG2[0]__delay:		DELAY (POSEDGE) Set_Button SSEG2[0] ;
+pos_Set_Button__SSEG2[1]__delay:		DELAY (POSEDGE) Set_Button SSEG2[1] ;
+pos_Set_Button__SSEG2[2]__delay:		DELAY (POSEDGE) Set_Button SSEG2[2] ;
+pos_Set_Button__SSEG2[3]__delay:		DELAY (POSEDGE) Set_Button SSEG2[3] ;
+pos_Set_Button__SSEG2[4]__delay:		DELAY (POSEDGE) Set_Button SSEG2[4] ;
+pos_Set_Button__SSEG2[5]__delay:		DELAY (POSEDGE) Set_Button SSEG2[5] ;
+pos_Set_Button__SSEG2[6]__delay:		DELAY (POSEDGE) Set_Button SSEG2[6] ;
+pos_Set_Button__SSEG3[0]__delay:		DELAY (POSEDGE) Set_Button SSEG3[0] ;
+pos_Set_Button__SSEG3[1]__delay:		DELAY (POSEDGE) Set_Button SSEG3[1] ;
+pos_Set_Button__SSEG3[2]__delay:		DELAY (POSEDGE) Set_Button SSEG3[2] ;
+pos_Set_Button__SSEG3[3]__delay:		DELAY (POSEDGE) Set_Button SSEG3[3] ;
+pos_Set_Button__SSEG3[4]__delay:		DELAY (POSEDGE) Set_Button SSEG3[4] ;
+pos_Set_Button__SSEG3[5]__delay:		DELAY (POSEDGE) Set_Button SSEG3[5] ;
+pos_Set_Button__SSEG3[6]__delay:		DELAY (POSEDGE) Set_Button SSEG3[6] ;
+pos_changing_page:page_nav|changing_state__Page_LED[0]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state Page_LED[0] ;
+pos_changing_page:page_nav|changing_state__Page_LED[1]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state Page_LED[1] ;
+pos_changing_page:page_nav|changing_state__Page_LED[2]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state Page_LED[2] ;
+pos_changing_page:page_nav|changing_state__Page_LED[3]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state Page_LED[3] ;
+pos_changing_page:page_nav|changing_state__Page_LED[4]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state Page_LED[4] ;
+pos_changing_page:page_nav|changing_state__SSEG0[0]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG0[0] ;
+pos_changing_page:page_nav|changing_state__SSEG0[1]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG0[1] ;
+pos_changing_page:page_nav|changing_state__SSEG0[2]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG0[2] ;
+pos_changing_page:page_nav|changing_state__SSEG0[3]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG0[3] ;
+pos_changing_page:page_nav|changing_state__SSEG0[4]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG0[4] ;
+pos_changing_page:page_nav|changing_state__SSEG0[5]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG0[5] ;
+pos_changing_page:page_nav|changing_state__SSEG0[6]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG0[6] ;
+pos_changing_page:page_nav|changing_state__SSEG1[0]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG1[0] ;
+pos_changing_page:page_nav|changing_state__SSEG1[1]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG1[1] ;
+pos_changing_page:page_nav|changing_state__SSEG1[2]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG1[2] ;
+pos_changing_page:page_nav|changing_state__SSEG1[3]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG1[3] ;
+pos_changing_page:page_nav|changing_state__SSEG1[4]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG1[4] ;
+pos_changing_page:page_nav|changing_state__SSEG1[5]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG1[5] ;
+pos_changing_page:page_nav|changing_state__SSEG1[6]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG1[6] ;
+pos_changing_page:page_nav|changing_state__SSEG2[0]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG2[0] ;
+pos_changing_page:page_nav|changing_state__SSEG2[1]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG2[1] ;
+pos_changing_page:page_nav|changing_state__SSEG2[2]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG2[2] ;
+pos_changing_page:page_nav|changing_state__SSEG2[3]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG2[3] ;
+pos_changing_page:page_nav|changing_state__SSEG2[4]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG2[4] ;
+pos_changing_page:page_nav|changing_state__SSEG2[5]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG2[5] ;
+pos_changing_page:page_nav|changing_state__SSEG2[6]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG2[6] ;
+pos_changing_page:page_nav|changing_state__SSEG3[0]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG3[0] ;
+pos_changing_page:page_nav|changing_state__SSEG3[1]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG3[1] ;
+pos_changing_page:page_nav|changing_state__SSEG3[2]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG3[2] ;
+pos_changing_page:page_nav|changing_state__SSEG3[3]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG3[3] ;
+pos_changing_page:page_nav|changing_state__SSEG3[4]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG3[4] ;
+pos_changing_page:page_nav|changing_state__SSEG3[5]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG3[5] ;
+pos_changing_page:page_nav|changing_state__SSEG3[6]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG3[6] ;
+pos_changing_page:page_nav|changing_state__SSEG4[1]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG4[1] ;
+pos_changing_page:page_nav|changing_state__SSEG4[2]__delay:		DELAY (POSEDGE) changing_page:page_nav|changing_state SSEG4[2] ;
+pos_stage[1][0]__SSEG0[0]__delay:		DELAY (POSEDGE) stage[1][0] SSEG0[0] ;
+pos_stage[1][0]__SSEG0[1]__delay:		DELAY (POSEDGE) stage[1][0] SSEG0[1] ;
+pos_stage[1][0]__SSEG0[2]__delay:		DELAY (POSEDGE) stage[1][0] SSEG0[2] ;
+pos_stage[1][0]__SSEG0[3]__delay:		DELAY (POSEDGE) stage[1][0] SSEG0[3] ;
+pos_stage[1][0]__SSEG0[4]__delay:		DELAY (POSEDGE) stage[1][0] SSEG0[4] ;
+pos_stage[1][0]__SSEG0[5]__delay:		DELAY (POSEDGE) stage[1][0] SSEG0[5] ;
+pos_stage[1][0]__SSEG0[6]__delay:		DELAY (POSEDGE) stage[1][0] SSEG0[6] ;
+pos_stage[1][0]__SSEG1[0]__delay:		DELAY (POSEDGE) stage[1][0] SSEG1[0] ;
+pos_stage[1][0]__SSEG1[1]__delay:		DELAY (POSEDGE) stage[1][0] SSEG1[1] ;
+pos_stage[1][0]__SSEG1[2]__delay:		DELAY (POSEDGE) stage[1][0] SSEG1[2] ;
+pos_stage[1][0]__SSEG1[3]__delay:		DELAY (POSEDGE) stage[1][0] SSEG1[3] ;
+pos_stage[1][0]__SSEG1[4]__delay:		DELAY (POSEDGE) stage[1][0] SSEG1[4] ;
+pos_stage[1][0]__SSEG1[5]__delay:		DELAY (POSEDGE) stage[1][0] SSEG1[5] ;
+pos_stage[1][0]__SSEG1[6]__delay:		DELAY (POSEDGE) stage[1][0] SSEG1[6] ;
+pos_stage[1][0]__SSEG2[0]__delay:		DELAY (POSEDGE) stage[1][0] SSEG2[0] ;
+pos_stage[1][0]__SSEG2[1]__delay:		DELAY (POSEDGE) stage[1][0] SSEG2[1] ;
+pos_stage[1][0]__SSEG2[2]__delay:		DELAY (POSEDGE) stage[1][0] SSEG2[2] ;
+pos_stage[1][0]__SSEG2[3]__delay:		DELAY (POSEDGE) stage[1][0] SSEG2[3] ;
+pos_stage[1][0]__SSEG2[4]__delay:		DELAY (POSEDGE) stage[1][0] SSEG2[4] ;
+pos_stage[1][0]__SSEG2[5]__delay:		DELAY (POSEDGE) stage[1][0] SSEG2[5] ;
+pos_stage[1][0]__SSEG2[6]__delay:		DELAY (POSEDGE) stage[1][0] SSEG2[6] ;
+pos_stage[1][0]__SSEG3[0]__delay:		DELAY (POSEDGE) stage[1][0] SSEG3[0] ;
+pos_stage[1][0]__SSEG3[1]__delay:		DELAY (POSEDGE) stage[1][0] SSEG3[1] ;
+pos_stage[1][0]__SSEG3[2]__delay:		DELAY (POSEDGE) stage[1][0] SSEG3[2] ;
+pos_stage[1][0]__SSEG3[3]__delay:		DELAY (POSEDGE) stage[1][0] SSEG3[3] ;
+pos_stage[1][0]__SSEG3[4]__delay:		DELAY (POSEDGE) stage[1][0] SSEG3[4] ;
+pos_stage[1][0]__SSEG3[5]__delay:		DELAY (POSEDGE) stage[1][0] SSEG3[5] ;
+pos_stage[1][0]__SSEG3[6]__delay:		DELAY (POSEDGE) stage[1][0] SSEG3[6] ;
+pos_stage[1][0]__SSEG4[1]__delay:		DELAY (POSEDGE) stage[1][0] SSEG4[1] ;
+pos_stage[1][0]__SSEG4[2]__delay:		DELAY (POSEDGE) stage[1][0] SSEG4[2] ;
+___4.032__delay:		DELAY  4.032 ;
+___5.150__delay:		DELAY  5.150 ;
+
+ENDMODEL

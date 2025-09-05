@@ -1,0 +1,335 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity cccv_controller_v4 is
+	port(
+		Start: in std_logic;
+		Set_Tres: in std_logic_vector(1 downto 0);
+		Inc_Dec: in std_logic;
+		Set_Button: in std_logic;
+		Clock: in std_logic;
+		Page_Next, Page_Prev: in std_logic;
+		
+		-- Output LED Indicator
+		Start_LED: out std_logic;
+		Tres_LED: out std_logic_vector(1 downto 0);
+		Page_LED: out std_logic_vector(4 downto 0);
+		LED_Page: out std_logic_vector(1 downto 0);
+
+		-- Seven-Segment Display
+		SSEG0: out std_logic_vector(7 downto 0);
+		SSEG1: out std_logic_vector(7 downto 0);
+		SSEG2: out std_logic_vector(7 downto 0);
+		SSEG3: out std_logic_vector(7 downto 0);
+		SSEG4: out std_logic_vector(7 downto 0);
+		SSEG5: out std_logic_vector(7 downto 0)
+	);
+end cccv_controller_v4;
+
+architecture arch of cccv_controller_v4 is 
+	-- Clock Configuration
+	--constant CLK_FREQ: integer := 50000000;
+	constant CLK_FREQ: integer := 10;
+	signal freq_count: integer := 0;
+	
+	-- Initial Battery Voltage and Charging Threshold
+	signal bat_volt: integer := 12600; -- Current Battery Voltage (mV)
+	signal thres_volt: integer := 14600; -- Charging Threshold (mV)
+	signal thres_curr: integer := 1500; -- Charging Threshold (mA)
+	constant standby_volt: integer := 13600; -- Stand By Voltage (mV) for Float Stage
+	constant standby_curr: integer := 80; -- Stand By Current (mA) for Float Stage
+
+	-- Signal for Sevent-Segment Display purposes
+	signal hex0, hex1, hex2, hex3, hex4, hex5: std_logic_vector(7 downto 0);
+	signal disp_tv_0, disp_tv_1, disp_tv_2, disp_tv_3: integer := 0; 
+	signal disp_tc_0, disp_tc_1, disp_tc_2, disp_tc_3: integer := 0;
+	signal disp_bv_0, disp_bv_1, disp_bv_2, disp_bv_3: integer := 0;
+	signal disp_cc_0, disp_cc_1, disp_cc_2, disp_cc_3: integer := 0;
+	signal disp_soc_0, disp_soc_1, disp_soc_2, disp_soc_3, disp_soc_4: integer := 0;
+	signal page_number: integer := 0;
+	signal next_state, prev_state: std_logic := '0';
+	signal next_count, prev_count: integer := 0;
+	signal page_indicator: std_logic_vector(4 downto 0) := "10000";
+
+	-- Signal for CCCV Charging process
+	signal gen_start: std_logic := '0';
+	signal rand_int: integer := 0;
+	signal rand_bits: std_logic_vector(2 downto 0);
+	signal soc_val: integer := 0; -- State of Charge Value
+	signal charging_curr: integer := 0; -- Charging Current value
+	signal volt_inc: integer := 0; -- Charging Voltage increase
+	signal curr_inc: integer := 0; -- Charging Current increase
+	signal stage: string(1 to 6) := "bulk  ";
+	
+	-- Constant for Charging Stage
+	type CHARGE_STAGES is array(0 to 2) of string(1 to 6);
+	constant charge_stage: CHARGE_STAGES := (
+		"bulk  ",
+		"absorb",
+		"float "
+	);
+
+	-- Constant of Sevent-Segment Numbers and Symbols
+	type SSEG_CONST_ARR is array (0 to 9) of std_logic_vector(6 downto 0);
+	constant sseg_const: SSEG_CONST_ARR := (
+		"1000000", "1111001", "0100100", "0110000",
+		"0011001","0010010","0000010",
+		"1111000","0000000","0010000"
+	);
+	constant SSEG_IDLE: std_logic_vector(7 downto 0) := "11111111";
+	
+	component lfsr_rand_gen
+		port (
+			Clock_In: in std_logic;
+			Gen_Num: in std_logic;
+			Rand_Out: out std_logic_vector(2 downto 0)
+		);
+	end component; 
+begin
+	-- Generating random integer using LFSR
+	rand_gen: lfsr_rand_gen
+	port map(Clock, gen_start, rand_bits);
+	rand_int <= to_integer(unsigned(rand_bits));
+
+	-- Charging Threshold Configuration
+	set_threshold: process(Start, Set_Tres, Inc_Dec, Set_Button)
+	begin
+		if (Start = '0' and Set_Tres(1) = '1') then
+			Tres_LED <= Set_Tres;
+			if falling_edge(Set_Button) then	
+				if Set_Tres(0) = '0' then -- Modified Voltage
+					if (Inc_Dec = '0') then
+						thres_volt <= thres_volt + 100;
+					else 
+						thres_volt <= thres_volt - 100;
+					end if;
+				elsif Set_Tres(0) = '1'then -- Modified Current
+					if (Inc_Dec = '0') then
+						thres_curr <= thres_curr +100;
+					else 
+						thres_curr <= thres_curr - 100;
+					end if;
+				end if;
+			end if;
+		else
+			Tres_LED <= Set_Tres;
+		end if;
+	end process set_threshold;
+
+	-- CCCV Charging
+	cccv_charging: process(Start, Clock, bat_volt, charging_curr, rand_int, stage)
+	begin
+		if (Start = '1') then
+			Start_LED <= '1';
+			gen_start <= '1';
+			curr_inc <= rand_int * 10;
+			if rising_edge(Clock) then
+				if (freq_count >= CLK_FREQ / 2) then
+					freq_count <= 0;
+					-- Charging Process Algorithm
+					case stage is
+						-- Bulk Stage => Constant Current
+						when "bulk  " =>
+							if (bat_volt < thres_volt) then
+								if charging_curr < thres_curr then
+									charging_curr <= charging_curr + curr_inc;
+								else
+									charging_curr <= charging_curr - curr_inc;
+								end if;
+								bat_volt <= bat_volt + 20;
+							else 
+								stage <= charge_stage(1);
+							end if;
+						-- Absorption Stage => Constant Voltage, Reduce Current
+						when "absorb" =>
+							if (charging_curr > thres_curr) then
+								charging_curr <= charging_curr - curr_inc;
+							elsif (charging_curr > standby_curr and charging_curr <= thres_curr) then
+								if (bat_volt < thres_volt) then
+									charging_curr <= charging_curr + curr_inc;
+									bat_volt <= bat_volt + 20;
+								else 
+									charging_curr <= charging_curr - curr_inc;
+									bat_volt <= bat_volt - 10;
+								end if;
+							else
+								stage <= charge_stage(2);
+							end if;
+						-- Float Stage => Constant Voltage with Low Current
+						when "float " => 
+							if bat_volt < standby_volt then
+								bat_volt <= bat_volt + 10;
+							else 
+								bat_volt <= bat_volt - 30;
+							end if;
+						when others =>
+							charging_curr <= charging_curr + 0;
+							bat_volt <= bat_volt + 0;
+					end case;
+				else
+					freq_count <= freq_count + 1;
+				end if;
+			end if;
+		else 
+			Start_LED <= '0';
+			gen_start <= '0';
+		end if;
+	end process cccv_charging;
+
+	-- State of Charge Calculation
+	calculate_soc: process(soc_val, bat_volt, thres_volt, stage, charging_curr)
+		variable curr_hold, curr_temp, volt_hold, volt_temp, prev_soc1, prev_soc2: integer;
+	begin
+		case stage is
+			when "bulk  " => 
+				soc_val <= integer((bat_volt * 8000) / thres_volt); 
+				curr_hold := charging_curr;
+				prev_soc1 := soc_val;
+			when "absorb" =>
+				curr_temp := (curr_hold - charging_curr) * 1500;
+				if curr_temp < 0 then
+					curr_temp := 0;
+				end if;
+				soc_val <= prev_soc1 + integer(curr_temp / (curr_hold - standby_curr));
+				volt_hold := bat_volt;
+				prev_soc2 := soc_val;
+			when "float " =>
+				volt_temp := (volt_hold - bat_volt) * 500;
+				soc_val <= prev_soc2 + integer(volt_temp / (volt_hold - standby_volt));
+				if soc_val >= 10000 then
+					soc_val <= 10000;
+				end if;
+			when others =>
+				soc_val <= soc_val;
+		end case;
+	end process calculate_soc;
+	
+	-- Page Navigation
+	page_navigation: process(
+		Page_Next, Page_Prev, page_number, Clock,
+		thres_volt, thres_curr, soc_val, bat_volt, charging_curr,
+		disp_tv_3, disp_tv_2, disp_tv_1, disp_tv_0,
+		disp_tc_3, disp_tc_2, disp_tc_1, disp_tc_0,
+		disp_bv_3, disp_bv_2, disp_bv_1, disp_bv_0,
+		disp_cc_3, disp_cc_2, disp_cc_1, disp_cc_0,
+		disp_soc_4, disp_soc_3, disp_soc_2, disp_soc_1, disp_soc_0
+	)
+	begin
+		
+		-- Determining the digit of each Seven-Segment 
+		-- Digit of Threshold Voltage
+		disp_tv_3 <= thres_volt / 10000;
+		disp_tv_2 <= (thres_volt / 1000) mod 10;
+		disp_tv_1 <= (thres_volt / 100) mod 10;
+		disp_tv_0 <= (thres_volt / 10) mod 10;
+		-- Digit of Threshold Current
+		disp_tc_3 <= thres_curr / 10000;
+		disp_tc_2 <= (thres_curr / 1000) mod 10;
+		disp_tc_1 <= (thres_curr / 100) mod 10;
+		disp_tc_0 <= (thres_curr / 10) mod 10;
+		-- Digit of Current Battery Voltage (Charging Voltage)
+		disp_bv_3 <= bat_volt / 10000;
+		disp_bv_2 <= (bat_volt / 1000) mod 10;
+		disp_bv_1 <= (bat_volt / 100) mod 10;
+		disp_bv_0 <= (bat_volt / 10) mod 10;
+		-- Digit of Charging Current
+		disp_cc_3 <= charging_curr / 10000;
+		disp_cc_2 <= (charging_curr / 1000) mod 10;
+		disp_cc_1 <= (charging_curr / 100) mod 10;
+		disp_cc_0 <= (charging_curr / 10) mod 10;
+		-- Digit of State of Charge (SoC)
+		disp_soc_4 <= soc_val / 10000;
+		disp_soc_3 <= (soc_val / 1000) mod 10;
+		disp_soc_2 <= (soc_val / 100) mod 10;
+		disp_soc_1 <= (soc_val / 10) mod 10;
+		disp_soc_0 <= soc_val mod 10;
+
+		-- Display Mode
+		case page_number is
+			-- Threshold Voltage
+			when 0 =>
+				page_indicator <= "10000";
+				hex5 <= SSEG_IDLE;
+				hex4 <= SSEG_IDLE;
+				if (disp_tv_3 /= 0) then
+					hex3 <= '1' & sseg_const(disp_tv_3);
+				else
+					hex3 <= SSEG_IDLE;
+				end if;
+				hex2 <= '0' & sseg_const(disp_tv_2);
+				hex1 <= '1' & sseg_const(disp_tv_1);
+				hex0 <= '1' & sseg_const(disp_tv_0);
+			-- Thershold Current
+			when 1 =>
+				page_indicator <= "01000";
+				hex5 <= SSEG_IDLE;
+				hex4 <= SSEG_IDLE;
+				if (disp_tc_3 /= 0) then 
+					hex3 <= '1' & sseg_const(disp_tc_3);
+				else 
+					hex3 <= SSEG_IDLE;
+				end if;
+				hex2 <= '0' & sseg_const(disp_tc_2);
+				hex1 <= '1' & sseg_const(disp_tc_1);
+				hex0 <= '1' & sseg_const(disp_tc_0);
+			-- Battery Voltage (Charging Voltage)
+			when 2 =>
+				page_indicator <= "00100";
+				hex5 <= SSEG_IDLE;
+				hex4 <= SSEG_IDLE;
+				if (disp_bv_3 /= 0) then
+					hex3 <= '1' & sseg_const(disp_bv_3);
+				else 
+					hex3 <= SSEG_IDLE;
+				end if;
+				hex2 <= '0' & sseg_const(disp_bv_2);
+				hex1 <= '1' & sseg_const(disp_bv_1);
+				hex0 <= '1' & sseg_const(disp_bv_0);
+			-- Charging Current
+			when 3 =>
+				page_indicator <= "00010";
+				hex5 <= SSEG_IDLE;
+				hex4 <= SSEG_IDLE;
+				if (disp_cc_3 /= 0) then
+					hex3 <= '1' & sseg_const(disp_cc_3);
+				else 
+					hex3 <= SSEG_IDLE;
+				end if;
+				hex2 <= '0' & sseg_const(disp_cc_2);
+				hex1 <= '1' & sseg_const(disp_cc_1);
+				hex0 <= '1' & sseg_const(disp_cc_0);
+			-- State of Charge (SoC)
+			when others =>
+				page_indicator <= "00001";
+				hex5 <= SSEG_IDLE;
+				if (disp_soc_4 = 1) then
+					hex4 <= '1' & sseg_const(disp_soc_4);
+				else				
+					hex4 <= SSEG_IDLE;
+				end if;
+				if (disp_soc_3 /= 0 and disp_soc_4 /= 1) then
+					hex3 <= '1' & sseg_const(disp_soc_3);
+				else				
+					hex3 <= SSEG_IDLE;
+				end if;
+				hex2 <= '0' & sseg_const(disp_soc_2);
+				hex1 <= '1' & sseg_const(disp_soc_1);
+				hex0 <= '1' & sseg_const(disp_soc_0);
+		end case;
+	end process page_navigation;
+
+	-- Display to Sevent Segmentv
+	display_threshold: process(thres_volt, thres_curr, soc_val, Page_Prev, Page_Next, bat_volt, charging_curr)
+	begin
+
+	end process display_threshold;
+
+	Page_LED <= page_indicator;
+	SSEG0 <= hex0;
+	SSEG1 <= hex1;
+	SSEG2 <= hex2;
+	SSEG3 <= hex3;
+	SSEG4 <= hex4;
+	SSEG5 <= hex5;
+end arch;
